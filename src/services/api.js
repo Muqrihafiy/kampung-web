@@ -1,6 +1,8 @@
+// src/services/api.js
 import axios from 'axios';
 import { API_BASE_URL, STORAGE_KEYS } from '../config/constants';
 
+// Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
@@ -9,6 +11,7 @@ const api = axios.create({
   },
 });
 
+// Request interceptor - Add JWT token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
@@ -20,6 +23,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Response interceptor - Handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -42,13 +46,28 @@ export const authAPI = {
 
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
-    if (response.data.token) {
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, response.data.token);
-      if (response.data.user) {
-        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+    const data = response.data;
+    
+    // Handle different response structures
+    if (data.success && data.data) {
+      // Backend returns { success: true, data: { token, user } }
+      if (data.data.token) {
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.data.token);
       }
+      if (data.data.user) {
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(data.data.user));
+      }
+      return data.data;
+    } else if (data.token) {
+      // Backend returns { token, user } directly
+      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.token);
+      if (data.user) {
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(data.user));
+      }
+      return data;
     }
-    return response.data;
+    
+    return data;
   },
 
   logout: () => {
@@ -66,10 +85,48 @@ export const authAPI = {
   },
 };
 
+// Users API
+export const usersAPI = {
+  getMe: async () => {
+    const response = await api.get('/users/me');
+    return response.data;
+  },
+
+  getUserById: async (userId) => {
+    const response = await api.get(`/users/${userId}`);
+    return response.data;
+  },
+
+  followUser: async (userId) => {
+    const response = await api.post(`/users/${userId}/follow`);
+    return response.data;
+  },
+
+  getFollowers: async (userId) => {
+    const response = await api.get(`/users/${userId}/followers`);
+    return response.data;
+  },
+
+  getFollowing: async (userId) => {
+    const response = await api.get(`/users/${userId}/following`);
+    return response.data;
+  },
+
+  searchUsers: async (query) => {
+    const response = await api.get('/users/search', { params: { q: query } });
+    return response.data;
+  },
+};
+
 // Posts API
 export const postsAPI = {
   getAllPosts: async () => {
     const response = await api.get('/posts');
+    return response.data;
+  },
+
+   getFeed: async () => {
+    const response = await api.get('/posts/feed');
     return response.data;
   },
 

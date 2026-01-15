@@ -13,7 +13,7 @@ const Home = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const data = await postsAPI.getAllPosts();
+      const data = await postsAPI.getFeed();
       setPosts(data);
       setError('');
     } catch (err) {
@@ -46,7 +46,7 @@ const Home = () => {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="container-custom py-8">
         <div className="max-w-80vh mx-auto space-y-6">
-          {/* Header */}
+
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gradient-primary mb-2">
               KampunG Feed
@@ -56,10 +56,10 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Create Post */}
+ 
           <CreatePost onPostCreated={handlePostCreated} />
 
-          {/* Posts Feed */}
+
           {loading ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2"

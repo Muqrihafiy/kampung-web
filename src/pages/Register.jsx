@@ -27,7 +27,6 @@ const Register = () => {
     setLoading(true);
     setError('');
 
-    // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -120,7 +119,7 @@ const Register = () => {
               required
               minLength={8}
               className="input"
-              placeholder="••••••••"
+              
             />
           </div>
 
@@ -137,7 +136,7 @@ const Register = () => {
               onChange={handleChange}
               required
               className="input"
-              placeholder="••••••••"
+        
             />
           </div>
 

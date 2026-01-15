@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import { BrowserRouter, Navigate, Route, Router, Routes } from 'react-router-dom';
+import Search from './pages/Search';
 
 function App() {
   return (
@@ -21,6 +22,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <ProtectedRoute>
+                  <Search />
                 </ProtectedRoute>
               }
             />
